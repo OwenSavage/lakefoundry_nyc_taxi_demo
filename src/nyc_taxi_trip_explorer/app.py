@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import streamlit as st
-
 from nyc_taxi_trip_explorer.data import DataRetrievalError, InvalidDateRangeError, default_repository
 from nyc_taxi_trip_explorer.ui import (
     build_app_state,
@@ -39,6 +37,8 @@ def run_app(streamlit_module, repository) -> None:
 
 
 def main() -> None:
+    import streamlit as st
+
     repository = default_repository()
     run_app(st, repository)
 
