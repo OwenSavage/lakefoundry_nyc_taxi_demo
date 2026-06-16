@@ -1,3 +1,1 @@
 -e ..
-# Keep the app package installed from the bundle root so the runtime wrapper and
-# packaged Streamlit module resolve consistently in Databricks Apps.

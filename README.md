@@ -49,9 +49,8 @@ Runtime settings are defined in `app/app.yaml` and the bundle app resource.
 
 - `app/app.yaml` starts Streamlit on port `8080`, which matches Databricks Apps expectations.
 - `DATABRICKS_WAREHOUSE_ID` is resolved from `valueFrom: sql-warehouse`.
-- `resources/nyc_taxi_trip_explorer.app.yml` declares the matching `sql-warehouse` app resource binding with `CAN_USE` permission.
-- `databricks.yml` sets `deployment.mode: direct`, which is required for bundle-managed Databricks App lifecycle operations.
-- `app/requirements.txt` installs the packaged project so the deployed app matches the local package structure.
+- `resources/nyc_taxi_trip_explorer.app.yml` declares the matching `sql-warehouse` app resource binding with `CAN_USE` permission and a concrete warehouse id for deployment.
+- `app/requirements.txt` installs the packaged project from the bundle root so the deployed app matches the local package structure.
 
 ## Bundle validation and deployment flow
 

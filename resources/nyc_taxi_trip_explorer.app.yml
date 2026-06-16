@@ -7,4 +7,5 @@ resources:
       resources:
         - name: sql-warehouse
           sql_warehouse:
+            id: c074840df7204256
             permission: CAN_USE
