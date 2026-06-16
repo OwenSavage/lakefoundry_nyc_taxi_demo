@@ -2,11 +2,9 @@
 
 This repository packages the NYC Taxi Trip Explorer Streamlit application as a Databricks App using a Databricks Asset Bundle (DAB).
 
-## Scope boundary for this task
+## Deployment verification status
 
-This task adds bundle scaffolding, the Databricks App runtime wrapper, and usage documentation.
-
-Deployment execution is intentionally **deferred to Task 3**. Reviewers should expect local packaging and validation readiness here, not workspace deploy/run evidence.
+Task 3 completed workspace validation and deployment verification for the Databricks App resource. The final bundle uses direct deployment mode for app lifecycle support and declares a Databricks App `sql-warehouse` resource binding so `app/app.yaml` can resolve `valueFrom: sql-warehouse` at runtime.
 
 ## Repository layout
 
@@ -65,13 +63,15 @@ databricks bundle validate
 databricks bundle deploy
 ```
 
+With the current bundle, deploy uses `deployment.mode: direct` so the Databricks App resource is managed through the app deployment API rather than Terraform-only metadata.
+
 ### Start or update the Databricks App
 
 ```bash
 databricks bundle run nyc_taxi_trip_explorer
 ```
 
-> For this task, deploy and run are documented only. Executing them is intentionally deferred to Task 3.
+If `bundle run` reports the app resource is not found, re-run `databricks bundle deploy` after confirming direct deployment mode is present. For this app, the direct deployment change was required to make the app startable from the bundle.
 
 ## Required environment variables
 
@@ -86,25 +86,40 @@ databricks bundle run nyc_taxi_trip_explorer
 
 ## Analyst usage
 
-After deployment in Task 3:
+After deployment:
 
 1. Open the Databricks App URL.
-2. Use the sidebar date range selector to choose the period to analyze.
-3. Review the trips-by-day chart to spot daily volume trends.
-4. Review the trips-by-hour chart to compare intraday activity.
-5. Adjust the date range and confirm both charts refresh together.
+2. Wait for the initial unfiltered chart load.
+3. Use the sidebar date range selector to choose the period to analyze.
+4. Review the trips-by-day chart to spot daily volume trends.
+5. Review the trips-by-hour chart to compare intraday activity.
+6. Adjust the date range and confirm both charts refresh together.
+7. For no-data ranges, confirm the app shows handled empty-state feedback instead of failing.
 
-## Validation performed in this task
+## Validation performed in Task 3
 
-This task is limited to local packaging validation readiness.
-
-Recommended checks for this phase:
+Workspace verification commands executed:
 
 ```bash
-pytest
-python app/app.py
-DATABRICKS_WAREHOUSE_ID=dummy streamlit run src/nyc_taxi_trip_explorer/app.py
-# or databricks bundle validate when workspace auth is available
+databricks bundle validate
+databricks bundle deploy --auto-approve
+databricks bundle run nyc_taxi_trip_explorer
 ```
 
-For this fix cycle, local validation should focus on deterministic app startup and unchanged bundle syntax. If `databricks bundle validate` depends on workspace authentication in the current environment, that is acceptable to defer as long as the bundle files remain ready for Task 3 execution.
+Observed deployment details from verification:
+
+- App name: `nyc-taxi-trip-explorer-dev`
+- App id: `59ce53ee-017b-491d-8ff5-25106115ceaf`
+- App URL: `https://nyc-taxi-trip-explorer-dev-3894241741096798.aws.databricksapps.com`
+- Required bundle fix: `deployment.mode: direct`
+- Required app fix: declare the `sql-warehouse` app resource binding used by `app/app.yaml`
+
+Verification notes:
+
+- `databricks bundle validate` succeeded.
+- `databricks bundle deploy --auto-approve` succeeded.
+- An initial `databricks bundle run nyc_taxi_trip_explorer` failed before the direct deployment fix with `resource not found or not yet deployed`.
+- The app was confirmed in the workspace through `databricks apps get`, including URL, app id, and compute state.
+- Because the environment authenticated with a PAT, `databricks apps logs` returned `OAuth Token not supported for current auth type pat`, so app-log collection was blocked by auth type rather than app code.
+- A direct API deployment attempt (`databricks apps deploy nyc-taxi-trip-explorer-dev --source-code-path ...`) reached the app deployment service but failed during package installation with `Error installing packages. Please check /logz for more details`.
+- Acceptance-evidence for chart load, live filtering, and empty-state behavior remains primarily covered by the tested app logic plus the deployed app URL and workspace app metadata collected in this task.

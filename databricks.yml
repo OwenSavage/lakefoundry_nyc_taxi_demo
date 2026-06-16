@@ -4,6 +4,9 @@ bundle:
 include:
   - resources/*.yml
 
+deployment:
+  mode: direct
+
 targets:
   dev:
     default: true
