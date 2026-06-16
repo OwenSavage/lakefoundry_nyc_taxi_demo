@@ -10,7 +10,5 @@ command:
   - "true"
 
 env:
-  - name: PYTHONPATH
-    value: /app:/app/src
   - name: DATABRICKS_WAREHOUSE_ID
     valueFrom: sql-warehouse

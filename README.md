@@ -45,7 +45,8 @@ The app uses Databricks SDK environment-based authentication. Do not hardcode to
 The deployed app reads runtime settings from `app/app.yaml`.
 
 - `DATABRICKS_WAREHOUSE_ID` is provided through `valueFrom: sql-warehouse` so the warehouse binding is managed by Databricks App metadata.
-- `PYTHONPATH` includes `/app` and `/app/src` so the wrapper can import the packaged Python module.
+- `app/app.py` bootstraps the repository-local `src/` directory before invoking `nyc_taxi_trip_explorer.app`, so startup does not depend on a hard-coded `PYTHONPATH` layout.
+- `app/requirements.txt` installs the project package from the bundle root, which keeps the Databricks App environment aligned with local development packaging.
 - The Streamlit command binds to port `8080`, which matches Databricks Apps expectations.
 
 ## Bundle commands
@@ -101,7 +102,9 @@ Recommended checks for this phase:
 
 ```bash
 pytest
-databricks bundle validate
+python app/app.py
+DATABRICKS_WAREHOUSE_ID=dummy streamlit run src/nyc_taxi_trip_explorer/app.py
+# or databricks bundle validate when workspace auth is available
 ```
 
-If bundle validation depends on workspace authentication in the current environment, that is acceptable to defer as long as the bundle files are ready for Task 3 execution.
+For this fix cycle, local validation should focus on deterministic app startup and unchanged bundle syntax. If `databricks bundle validate` depends on workspace authentication in the current environment, that is acceptable to defer as long as the bundle files remain ready for Task 3 execution.
