@@ -1,0 +1,13 @@
+pyproject.toml
+src/nyc_taxi_trip_explorer/__init__.py
+src/nyc_taxi_trip_explorer/app.py
+src/nyc_taxi_trip_explorer/data.py
+src/nyc_taxi_trip_explorer/ui.py
+src/nyc_taxi_trip_explorer.egg-info/PKG-INFO
+src/nyc_taxi_trip_explorer.egg-info/SOURCES.txt
+src/nyc_taxi_trip_explorer.egg-info/dependency_links.txt
+src/nyc_taxi_trip_explorer.egg-info/requires.txt
+src/nyc_taxi_trip_explorer.egg-info/top_level.txt
+tests/test_app.py
+tests/test_data.py
+tests/test_ui.py

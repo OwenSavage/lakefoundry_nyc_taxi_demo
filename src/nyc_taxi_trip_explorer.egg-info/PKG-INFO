@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: nyc-taxi-trip-explorer
+Version: 0.1.0
+Summary: Streamlit app for exploring NYC taxi trips in Databricks
+Requires-Python: >=3.11
+Requires-Dist: databricks-sdk>=0.36.0
+Requires-Dist: databricks-sql-connector>=3.5.0
+Requires-Dist: pandas>=2.2.0
+Requires-Dist: streamlit>=1.38.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3.0; extra == "dev"
