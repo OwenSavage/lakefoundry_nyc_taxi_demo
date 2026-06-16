@@ -104,17 +104,49 @@ SAMPLE_AGGREGATES = TripAggregates(
 )
 
 
-def test_run_app_renders_title_metrics_and_charts() -> None:
-    st = FakeStreamlit((date(2016, 2, 1), date(2016, 2, 2)))
+def test_run_app_initial_load_uses_unfiltered_repository_call() -> None:
+    st = FakeStreamlit(())
     repository = RecordingRepository(result=SAMPLE_AGGREGATES)
 
     run_app(st, repository)
 
     assert st.page_config[0]["page_title"] == "NYC Taxi Trip Explorer"
     assert st.titles == ["NYC Taxi Trip Explorer"]
-    assert repository.calls == [(date(2016, 2, 1), date(2016, 2, 2))]
+    assert repository.calls == [(None, None)]
+    assert st.sidebar.headers == ["Filters"]
+    assert st.sidebar.captions == ["Leave the picker empty to load the default, unfiltered view."]
     assert ("Trips in selection", 3) in st.metrics
     assert len(st.bar_charts) == 2
+
+
+def test_run_app_applies_valid_sidebar_date_filter() -> None:
+    st = FakeStreamlit((date(2016, 2, 1), date(2016, 2, 2)))
+    repository = RecordingRepository(result=SAMPLE_AGGREGATES)
+
+    run_app(st, repository)
+
+    assert repository.calls == [(date(2016, 2, 1), date(2016, 2, 2))]
+    assert st.messages == []
+    assert len(st.bar_charts) == 2
+
+
+def test_run_app_handles_empty_results() -> None:
+    st = FakeStreamlit((date(2016, 3, 1), date(2016, 3, 2)))
+    repository = RecordingRepository(
+        result=TripAggregates(
+            daily=pd.DataFrame(columns=["pickup_date", "trip_count"]),
+            hourly=pd.DataFrame(columns=["pickup_hour", "trip_count"]),
+            trip_count=0,
+        )
+    )
+
+    run_app(st, repository)
+
+    assert repository.calls == [(date(2016, 3, 1), date(2016, 3, 2))]
+    assert ("warning", "No trips found for the selected date range.") in st.messages
+    assert ("info", "No trip data is available for the selected date range.") in st.messages
+    assert ("Trips in selection", 0) in st.metrics
+    assert st.bar_charts == []
 
 
 def test_run_app_handles_invalid_date_range_without_querying() -> None:

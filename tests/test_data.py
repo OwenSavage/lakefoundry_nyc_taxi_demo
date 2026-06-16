@@ -101,5 +101,37 @@ def test_repository_wraps_runtime_failures() -> None:
     client = RecordingClient(RuntimeError("warehouse unavailable"))
     repository = DatabricksTaxiRepository(client)
 
-    with pytest.raises(DataRetrievalError):
+    with pytest.raises(DataRetrievalError, match="warehouse unavailable"):
         repository.load_trips()
+
+
+def test_repository_propagates_invalid_date_errors_without_querying() -> None:
+    client = RecordingClient(pd.DataFrame({"pickup_datetime": []}))
+    repository = DatabricksTaxiRepository(client)
+
+    with pytest.raises(InvalidDateRangeError, match="Start date must be on or before end date"):
+        repository.load_trips(start_date=date(2016, 2, 4), end_date=date(2016, 2, 3))
+
+    assert client.calls == []
+
+
+def test_normalise_trip_frame_drops_unparseable_timestamps() -> None:
+    frame = pd.DataFrame(
+        {
+            "pickup_datetime": [
+                "2016-02-01T08:15:00",
+                "not-a-timestamp",
+                None,
+                "2016-02-01T09:45:00",
+            ]
+        }
+    )
+
+    result = normalise_trip_frame(frame)
+
+    assert result.trip_count == 2
+    assert result.daily.to_dict("records") == [{"pickup_date": date(2016, 2, 1), "trip_count": 2}]
+    assert result.hourly.to_dict("records") == [
+        {"pickup_hour": 8, "trip_count": 1},
+        {"pickup_hour": 9, "trip_count": 1},
+    ]

@@ -9,12 +9,33 @@ from nyc_taxi_trip_explorer.ui import (
     AppState,
     build_app_state,
     chart_panels,
+    render_sidebar,
+    render_state_message,
     validate_date_selection,
 )
 
 
+class RecordingSidebar:
+    def __init__(self, selection=None) -> None:
+        self.selection = selection
+        self.headers: list[str] = []
+        self.captions: list[str] = []
+        self.date_inputs: list[dict[str, object]] = []
+
+    def header(self, text: str) -> None:
+        self.headers.append(text)
+
+    def date_input(self, label: str, **kwargs):
+        self.date_inputs.append({"label": label, **kwargs})
+        return self.selection
+
+    def caption(self, text: str) -> None:
+        self.captions.append(text)
+
+
 class RecordingStreamlit:
-    def __init__(self) -> None:
+    def __init__(self, selection=None) -> None:
+        self.sidebar = RecordingSidebar(selection)
         self.messages: list[tuple[str, str]] = []
         self.subheaders: list[str] = []
         self.bar_charts: list[pd.DataFrame] = []
@@ -120,3 +141,36 @@ def test_chart_panels_show_info_message_for_empty_data() -> None:
     chart_panels(st, empty)
 
     assert ("info", "No trip data is available for the selected date range.") in st.messages
+
+
+def test_render_sidebar_returns_selection_and_records_filter_copy() -> None:
+    st = RecordingStreamlit(selection=(date(2016, 2, 1), date(2016, 2, 2)))
+
+    selection = render_sidebar(st)
+
+    assert selection == (date(2016, 2, 1), date(2016, 2, 2))
+    assert st.sidebar.headers == ["Filters"]
+    assert st.sidebar.date_inputs == [
+        {
+            "label": "Trip pickup date range",
+            "value": (),
+            "help": "Choose a start and end date to reload the charts.",
+        }
+    ]
+    assert st.sidebar.captions == ["Leave the picker empty to load the default, unfiltered view."]
+
+
+def test_render_state_message_uses_configured_streamlit_method() -> None:
+    st = RecordingStreamlit()
+
+    render_state_message(st, AppState(message_level="warning", message="No trips found for the selected date range."))
+
+    assert st.messages == [("warning", "No trips found for the selected date range.")]
+
+
+def test_render_state_message_skips_empty_state() -> None:
+    st = RecordingStreamlit()
+
+    render_state_message(st, AppState())
+
+    assert st.messages == []
