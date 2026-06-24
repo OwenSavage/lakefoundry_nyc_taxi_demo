@@ -1,0 +1,153 @@
+id: 281fe7f9-0b47-420e-bd8e-7bd8c23593ef
+title: "NYC Taxi Trip Explorer \u2014 Databricks App"
+work_type: DATA_PRODUCT
+version: 0.1.0
+outcome: 'Build a Databricks App for data analysts to explore NYC Taxi trip patterns.
+  The app surfaces trip volume by day and by hour of day, with an interactive date
+  range filter. Analysts should be able to identify daily and intraday trends without
+  writing SQL.
+
+
+  Success criteria:
+
+  1. Charts render trip counts grouped by date with no errors.
+
+  2. Analyst can filter by date range and see both the daily and hourly views update
+  live.'
+artifact_plan: "**Databricks App \u2014 NYC Taxi Trip Explorer**\n\n**UI Framework**:\
+  \ Streamlit (native Databricks App support)\n\n**Data source**: `samples.nyctaxi.trips`\
+  \ (Databricks sample dataset)\n\n**Views**:\n1. Trips by Day \u2014 bar/line chart\
+  \ showing total trip count per calendar date\n2. Trips by Hour \u2014 bar chart\
+  \ showing trip distribution across hours 0\u201323\n\n**Interactions**:\n- Date\
+  \ range picker sidebar (defaults to last 30 days, expandable to full dataset range)\n\
+  - Both charts update live on filter change\n\n**Compute**: Workspace default (no\
+  \ custom cluster policy)\n\n**Deployment**: Databricks Asset Bundle (DAB) targeting\
+  \ the workspace as a Databricks App"
+decisions:
+- "Use workspace default compute for the Databricks App \u2014 no custom cluster policy\
+  \ required."
+assumptions:
+- samples.nyctaxi.trips is accessible in the target Databricks workspace.
+- The app will be deployed as a Databricks App (not a standalone web service).
+- No authentication or row-level security is required beyond workspace access.
+open_questions:
+- "None \u2014 all open questions resolved: Streamlit chosen as UI framework, last\
+  \ 30 days as default date range, workspace default compute selected."
+phase_roadmap:
+- name: NYC Taxi Trip Explorer Databricks App Development
+  size: medium
+  context:
+  - source: contract_outcome
+    description: Build a Databricks App for data analysts to explore NYC Taxi trip
+      patterns. The app surfaces trip volume by day and by hour of day, with an interactive
+      date range filter. Analysts should be able to identify daily and intraday trends
+      without writing SQL.
+  - source: contract_artifact_plan
+    description: 'UI framework: Streamlit. App will be structured as a single-page
+      Streamlit app with a date range picker sidebar and two chart panels (trips by
+      day, trips by hour).'
+  - source: contract_assumptions
+    description: samples.nyctaxi.trips is accessible in the target Databricks workspace.
+      The app will be deployed as a Databricks App (not a standalone web service).
+      No authentication or row-level security is required beyond workspace access.
+  - source: contract_decisions
+    description: "Use Streamlit as the UI framework \u2014 native Databricks App support,\
+      \ simpler to build, well-suited for analyst-facing apps."
+  - source: contract_success_criteria_1
+    description: Charts render trip counts grouped by date with no errors.
+  - source: contract_success_criteria_2
+    description: Analyst can filter by date range and see both the daily and hourly
+      views update live.
+  phase_id: phase-1
+  objective: Develop, test, and deploy a Streamlit Databricks App that enables data
+    analysts to explore NYC Taxi trip patterns, displaying trip volume by day and
+    by hour with an interactive date range filter.
+  dependencies: []
+  phase_number: 1
+  delivery_area: databricks_app
+  excluded_scope:
+  - Data ingestion or ETL pipelines for the `samples.nyctaxi.trips` dataset (assumed
+    to be accessible).
+  - Advanced authentication or row-level security beyond standard Databricks workspace
+    access.
+  - Performance optimization beyond initial implementation (e.g., pre-aggregation,
+    advanced caching).
+  - Additional features such as more chart types, advanced filters, or custom visualizations.
+  - Defining or setting up dedicated compute clusters or cluster policies for the
+    Databricks App (assumed to be pre-existing or handled externally).
+  included_scope:
+  - Streamlit application development for the NYC Taxi Trip Explorer.
+  - Integration with the `samples.nyctaxi.trips` dataset.
+  - Implementation of a date range picker sidebar for filtering.
+  - Development of the 'trips by day' chart panel.
+  - Development of the 'trips by hour' chart panel.
+  - Deployment of the Streamlit application as a Databricks App using Databricks Asset
+    Bundles (DABs).
+  - Basic error handling and user feedback within the application.
+  - Unit and integration tests for the application components.
+  - Documentation for app usage and deployment procedures.
+  split_rationale: This contract focuses on a single, cohesive Databricks Streamlit
+    application. The scope does not involve distinct data ingestion, ML model development,
+    or complex orchestration components that would warrant separate phases. All work
+    is directly related to the application's functionality and deployment, making
+    a single phase the most efficient and logical approach for this MVP.
+  validation_plan:
+  - Deploy the Databricks App to a designated staging environment within the Databricks
+    workspace.
+  - Access the deployed application through its unique Databricks App URL.
+  - Verify that both 'trips by day' and 'trips by hour' charts load and display data
+    correctly upon the application's initial launch.
+  - Utilize the date range picker to select various date ranges (e.g., single day,
+    a week, a month, the full dataset range, and custom ranges) and confirm that both
+    charts update dynamically and accurately based on the selected filter.
+  - Test edge cases for date selection, such as selecting a range with no available
+    data or an invalid date range, and observe appropriate application behavior (e.g.,
+    empty charts, error messages).
+  - Monitor Databricks application logs for any errors, warnings, or unexpected behavior
+    during testing.
+  - Conduct a peer code review of the Streamlit application source code and DAB configuration
+    to ensure quality, adherence to standards, and proper documentation.
+  acceptance_criteria:
+  - description: The Streamlit application is successfully deployed as a Databricks
+      App and is accessible via a Databricks workspace URL.
+    criterion_id: app_deploys_successfully
+  - description: Both the 'trips by day' and 'trips by hour' charts render without
+      errors, accurately displaying data from the `samples.nyctaxi.trips` dataset
+      upon initial load.
+    criterion_id: charts_render_correctly
+  - description: The date range picker sidebar allows users to select and apply a
+      valid date range.
+    criterion_id: date_filter_functional
+  - description: Both the 'trips by day' and 'trips by hour' charts update live and
+      accurately reflect the data filtered by the selected date range.
+    criterion_id: charts_update_dynamically
+  - description: The application runs without unhandled exceptions or critical errors
+      during typical usage scenarios.
+    criterion_id: no_runtime_errors
+  - description: The application code adheres to agreed-upon coding standards, maintainability
+      guidelines, and security best practices.
+    criterion_id: code_follows_best_practices
+  expected_deliverables:
+  - name: Streamlit Application Source Code
+    description: Python source code for the NYC Taxi Trip Explorer Streamlit application,
+      organized in a Databricks Asset Bundle (DAB) compatible structure.
+    deliverable_id: streamlit_app_source_code
+  - name: Databricks App Bundle (DAB) Artifacts
+    description: Configuration files and scripts required to deploy the Streamlit
+      application as a Databricks App using Databricks Asset Bundles.
+    deliverable_id: databricks_app_bundle_artifacts
+  - name: Application Deployment and Usage Guide
+    description: Documentation detailing the steps to deploy, configure, and use the
+      NYC Taxi Trip Explorer Databricks App.
+    deliverable_id: app_deployment_guide
+  - name: Application Test Results Report
+    description: Evidence of successful execution of unit and integration tests for
+      the Streamlit application.
+    deliverable_id: test_results_report
+phase_approval:
+  state: approved
+  approved: true
+  approved_at: '2026-06-16T15:32:27.813155+00:00'
+  approved_by: owen.savage@slalom.com
+  approved_phase_ids:
+  - phase-1

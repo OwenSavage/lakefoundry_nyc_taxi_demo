@@ -1,0 +1,11 @@
+resources:
+  apps:
+    nyc_taxi_trip_explorer:
+      name: nyc-taxi-trip-explorer-${bundle.target}
+      description: Analyst-facing Streamlit app for exploring NYC taxi trip trends.
+      source_code_path: ../app
+      resources:
+        - name: sql-warehouse
+          sql_warehouse:
+            id: c074840df7204256
+            permission: CAN_USE

@@ -1,0 +1,13 @@
+[1m============================= test session starts ==============================[0m
+platform linux -- Python 3.12.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: /tmp/lakefoundry/runs/c94d49b5-0c2b-4f1a-878e-70a5c87f96ca
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.14.0, langsmith-0.8.16
+collected 16 items
+
+tests/test_app.py [32m.[0m[32m.[0m[32m.[0m[32m                                                    [ 18%][0m
+tests/test_data.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m                                               [ 62%][0m
+tests/test_ui.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m                                                  [100%][0m
+
+[32m============================== [32m[1m16 passed[0m[32m in 0.62s[0m[32m ==============================[0m
